@@ -61,6 +61,44 @@ func main() {
 		firstLanguage  = "Bahasa Indonesia"
 		secondLanguage = "English"
 	)
+	father, mother := "rusli", "erna"
 	fmt.Println(firstLanguage)
 	fmt.Println(secondLanguage)
+	fmt.Println(father)
+	fmt.Println(mother)
+
+	// Constant = variable with fixed value, and have to initialize the value
+	const country string = "Indonesia"
+	const city = "Jakarta"
+	const rt = 01
+	// If you build constant you dont have to use it, unlike variable
+	fmt.Println(country)
+	fmt.Println(city)
+	// in constant you can't use ":="
+	// example = "const city := "Bandung" => ERROR
+	// Declare multiple const = multiple var
+	const (
+		favMovie   string = "Toy story"
+		favMusic          = "Repeat until death"
+		numOfMusic        = 2000
+	)
+	fmt.Println(favMovie)
+	fmt.Println(favMusic)
+	fmt.Println(numOfMusic)
+
+	// Data conversion
+	// almost like python, but becareful of integer overflow
+	var numOfDays8 int8 = 7
+	var numOfDays16 int16 = int16(numOfDays8)
+	var numOfDays32 int32 = int32(numOfDays16)
+	fmt.Println(numOfDays8)
+	fmt.Println(numOfDays16)
+	fmt.Println(numOfDays32)
+	// byte into string
+	var object = "Laptop"
+	var byteObject = object[0]
+	var stringObject = string(byteObject)
+	fmt.Println(object)
+	fmt.Println(byteObject)
+	fmt.Println(stringObject)
 }
