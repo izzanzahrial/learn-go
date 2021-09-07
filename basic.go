@@ -604,6 +604,56 @@ func main() {
 	// Function return
 	result := getResult(4, 4)
 	fmt.Println(result)
+
+	sectionDivider("Multiple values return")
+	// You can return more than one values in go, like python
+	one, two := moreThanOne()
+	fmt.Println(one, two)
+	// You can use "_" if you dont need the return value
+	three, _ := moreThanOne()
+	fmt.Println(three)
+
+	sectionDivider("Named return values")
+	// Return values with assign key(named)
+	firstName, middleName, lastName := fullName()
+	fmt.Println(firstName, middleName, lastName)
+
+	sectionDivider("Variadic Function(varargs)")
+	// Variadic function(varargs) is like an array but you dont have to create it before hand
+	// and variadic function located at the end of the parameter
+	total := sumNum(1, 2, 3, 4, 5)
+	fmt.Println(total)
+	// you can input slice into variadic function, just add "..." at the of the slice that you assigned
+	slice8 := []int{10, 9, 8, 7, 6}
+	total = sumNum(slice8...) // <-- slice into variadic
+	fmt.Println(total)
+
+	sectionDivider("Function as Value")
+	// Function as value
+	// add a function into a variable
+	hello := hello
+	fmt.Println(hello("izzan"))
+
+	sectionDivider("Function as Parameter")
+	// make a function into a parameter
+	sayHelloToMyLittleFriend("machine gun", littleFriendFilter)
+
+	sectionDivider("Function type declarations")
+	// using type declarations for function
+	sayHelloToMyLittleFriend2("shoot gun", littleFriendFilter)
+
+	sectionDivider("Anonymous Function")
+	// like lambda in python, function without name
+	// version 1
+	inTheList := func(name string) bool { // <-- create variable and add function into that variable
+		return name == "Izzan" // <-- check if the name equal "izzan"
+	}
+	whiteList("Izzan", inTheList) // <-- use variable that contain function, to check the input
+
+	// version 2
+	whiteList("Zahrial", func(name string) bool { // <-- without creating a variable, passing the anonymous function
+		return name == "Izzan" // into the main function
+	})
 }
 
 // Function
@@ -623,4 +673,73 @@ func sectionDivider(section string) {
 // Function Return
 func getResult(value1 int, value2 int) int {
 	return value1 + value2
+}
+
+// Return multiple values
+func moreThanOne() (string, string) {
+	return "One", "Two"
+}
+
+// Named return values
+func fullName() (firstName, middleName, lastName string) {
+	firstName = "Ahmad"
+	middleName = "Izzan"
+	lastName = "Zahrial"
+
+	// you can return it without assign the return key
+	// you can use this if you already assign the named or the key of return data
+	return
+	// or the normal way
+	// return firstName, middleName, lastName
+}
+
+// Variadic function(varargs)
+func sumNum(numbers ...int) int {
+	total := 0
+	for _, number := range numbers {
+		total += number
+	}
+	return total
+}
+
+// Function as value
+func hello(name string) string {
+	return "Hello " + name
+}
+
+// Function as parameter
+func sayHelloToMyLittleFriend(name string, filter func(string) string) {
+	filteredFriend := filter(name)
+	fmt.Println("Say hello to my", filteredFriend)
+}
+
+func littleFriendFilter(name string) string {
+	if name == "machine gun" {
+		return "little friend"
+	} else {
+		return ", never mind"
+	}
+}
+
+// Function type declarations
+
+// Create the type
+type Filter func(string) string
+
+// Assign the type declaration
+func sayHelloToMyLittleFriend2(name string, filter Filter) { // use the type declaration
+	filteredFriend := filter(name)
+	fmt.Println("Say hello to my", filteredFriend)
+}
+
+// Anonymous function
+// create type function for ease of use
+type InTheList func(string) bool
+
+func whiteList(name string, inTheList InTheList) {
+	if inTheList(name) {
+		fmt.Println("This way please Mr.", name)
+	} else {
+		fmt.Println("Sorry you're not on the list")
+	}
 }
