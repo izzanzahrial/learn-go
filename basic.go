@@ -654,6 +654,86 @@ func main() {
 	whiteList("Zahrial", func(name string) bool { // <-- without creating a variable, passing the anonymous function
 		return name == "Izzan" // into the main function
 	})
+
+	sectionDivider("Recursive")
+	// Recursive function
+	fac := factorial(5)
+	fmt.Println(fac)
+
+	sectionDivider("Closure Function")
+	// access data outside the scope, or some thing like that
+	open := open()
+	fmt.Println(open)
+
+	sectionDivider("Defer function")
+	// Function that will run after his ancestor/caller
+	// defer function will run even though there is an error in the ancestor level if you place it at the start
+	// of function
+	runApp()
+
+	sectionDivider("Panic function")
+	// Function that will stop the application if there is an error in it
+	// but if there is an defer in it, the defer function will still run
+	start(false) // <-- true = call panic error, false = didn't call panic error
+
+	sectionDivider("Recover function")
+	// Function that will catch panic data.
+	// with recover function, panic function will stop and the application will keep running
+	start2(true)
+
+	sectionDivider("Comments")
+	// use "//" for single line comment
+	// or use "/*" at the start of the line and "*/" at the of the line for multiple line comment
+
+	sectionDivider("Struct")
+	// Is like class in OOP
+	var izzan Doctor
+	izzan.Name = "Ahmad Izzan Zahrial"
+	izzan.Address = "Indonesia"
+	izzan.Age = 26
+	izzan.Speciality = "Brain surgeon"
+
+	fmt.Println(izzan)
+
+	// another way to creat struct or struct literals
+	ahmad := Doctor{
+		Name:       "Ahmad",
+		Address:    "Indonesia",
+		Age:        25,
+		Speciality: "Nerve",
+	}
+	fmt.Println(ahmad)
+
+	zahrial := Doctor{"Zahrial", "Indonesia", "Eyes", 24}
+	fmt.Println(zahrial)
+
+	sectionDivider("Struct Method")
+	// Is like class function in OOP
+	// Is like struct function but not really
+	rusli := Doctor{Name: "Rusli"}
+	rusli.sayHi()
+
+	sectionDivider("Interface")
+	// Is abstract data = you can't implement it directly
+	// Is a contract for a function
+	// i still kind a confuse about this one
+	var syakila Person
+	syakila.Name = "Syakila"
+
+	byeBye(syakila)
+
+	sectionDivider("Interface 2")
+	// antother example for interface
+	wolf := Animal{
+		Name: "Black",
+	}
+	byeBye(wolf)
+
+	sectionDivider("Empty Interface")
+	// is like data but you dont have to specify the type or something like that
+	// still kind a confuse
+	var data interface{} = Blank(2)
+	fmt.Println(data)
 }
 
 // Function
@@ -743,3 +823,120 @@ func whiteList(name string, inTheList InTheList) {
 		fmt.Println("Sorry you're not on the list")
 	}
 }
+
+// Recursive function
+func factorial(value int) int {
+	if value == 1 {
+		return 1
+	} else {
+		return value * factorial(value-1)
+	}
+}
+
+// Closure function
+func open() int {
+	value := 0
+
+	open := func() { // <-- closure func
+		value++ // accessing data froum outside function
+	} // the outside function can't access the data from inside the function
+
+	open()
+
+	return value
+}
+
+// Defer function
+func logging() {
+	fmt.Println("Application Done!")
+}
+
+func runApp() {
+	defer logging()
+	fmt.Println("Run Application")
+}
+
+// Panic function
+func done() {
+	fmt.Println("Done running")
+}
+
+func start(error bool) {
+	defer done()
+	if error {
+		panic("Didn't start error!")
+	}
+	fmt.Println("Start!")
+}
+
+// Recover function
+func done2() {
+	message := recover()
+	if message != nil {
+		fmt.Println("ERROR :", message)
+	}
+	fmt.Println("Done running")
+}
+
+func start2(error bool) {
+	defer done2()
+	if error {
+		panic("Didn't start error!")
+	}
+	fmt.Println("Start!")
+}
+
+// Struct
+// in struct you use Upper case at first for the struct and the field
+type Doctor struct {
+	Name, Address, Speciality string
+	Age                       int
+}
+
+// Struct function or method
+func (doctor Doctor) sayHi() {
+	fmt.Println("Hi, my name is Dr.", doctor.Name)
+}
+
+// interface
+type HasName interface {
+	GetName() string
+}
+
+func byeBye(hasName HasName) {
+	fmt.Println("Bye bye", hasName.GetName())
+}
+
+type Person struct {
+	Name string
+}
+
+func (person Person) GetName() string {
+	return person.Name
+}
+
+// interface 2
+
+type Animal struct {
+	Name string
+}
+
+func (animal Animal) GetName() string {
+	return animal.Name
+}
+
+// Empty interface
+func Blank(i int) interface{} {
+	if i == 1 {
+		return 1
+	} else if i == 2 {
+		return true
+	} else {
+		return ""
+	}
+}
+
+// ^ empty interface above is like interface below
+// type Blank interface {
+
+// }
