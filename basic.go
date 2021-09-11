@@ -3,6 +3,7 @@ package main
 
 // import package fmt to use Println
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -716,7 +717,12 @@ func main() {
 	sectionDivider("Interface")
 	// Is abstract data = you can't implement it directly
 	// Is a contract for a function
-	// i still kind a confuse about this one
+	// let say you have 2 object, baseball and football
+	// that objects can have a similar function = throwAble() or kickAble()
+	// based on that you can create contract using interface
+	// in that interface you can store the throwAble() as a contract
+	// where if you wanna use the interface your object have to have thorAble() function
+	// https://www.youtube.com/watch?v=qJKQZKGZgf0&ab_channel=LearnGoProgramming
 	var syakila Person
 	syakila.Name = "Syakila"
 
@@ -731,9 +737,110 @@ func main() {
 
 	sectionDivider("Empty Interface")
 	// is like data but you dont have to specify the type or something like that
-	// still kind a confuse
+	// so basically you can put any value inside it
 	var data interface{} = Blank(2)
 	fmt.Println(data)
+
+	sectionDivider("Nil or Null or None")
+	// In golang every data type has it's own default null value like 0 in int
+	// so if you wanna specify it into null or nil, you gotta use "nil" as value
+	var person1 map[string]string = nil
+	fmt.Println(person1)
+	person3 := newMap("Izzan")
+	fmt.Println(person3)
+	// you can use nil to check if the data is empty
+
+	sectionDivider("Interface Error")
+	// golang have build in library for error
+	var errorExample error = errors.New("Example Error")
+	fmt.Println(errorExample.Error())
+	// another example
+	value3, err := diveder1(25, 0)
+	if err == nil {
+		fmt.Println("Result :", value3)
+	} else {
+		fmt.Println("Error", err.Error())
+	}
+
+	sectionDivider("Type Assertions")
+	// Type assertions is setting a type for empty interface
+	// if you set wrong type, it will result panic(stop the program)
+	value4 := testTypeAssertions()
+	value4Int := value4.(int)
+	fmt.Println(value4Int, value4)
+	// if i use type assertions string, it will result panic
+	// value4 := testTypeAssertions()
+	// value4Int := value4.(string) <-- Panic
+	// fmt.Println(value4Int, value4)
+
+	sectionDivider("Type Assertions using Switch")
+	value5 := testTypeAssertions()
+	switch value6 := value5.(type) {
+	case string:
+		fmt.Println("String type", value6)
+	case int:
+		fmt.Println("Int type", value6)
+	case bool:
+		fmt.Println("Bool type", value6)
+	default:
+		fmt.Println("Unknown")
+	}
+
+	sectionDivider("Pointer")
+	// Pointer in go is used for pass data by reference
+	// basically like using the data without duplicating it
+	address1 := Address{"Jakarta", "DKI Jakarta", "Indonesia"}
+	address2 := &address1 // "&" symbol is the pointer, used to reference the data in address1
+	address3 := &address1
+	address4 := &address1
+
+	// var address1 Address = Address{"Jakarta", "DKI Jakarta", "Indonesia"}
+	// var address2 *Address= &address1
+
+	address2.Province = "Banten" // Because we using pointer, the data in address2 and address1 will change
+	// it happens because the pointer, point to the same data memory
+	// only can be used to change one field value
+	fmt.Println(address1)
+	fmt.Println(address2)
+	line()
+
+	address2 = &Address{"Lombok", "NTB", "Indonesia"} // You can't use "&" to change all the field value
+	// instead changing all the field value, it will create a new data
+
+	fmt.Println(address1)
+	fmt.Println(address2)
+	line()
+
+	// You can use "*" to reference the all data that connect to the memory will change to the new data
+	*address3 = Address{"Lombok", "NTB", "Indonesia"}
+	fmt.Println(address1)
+	fmt.Println(address3)
+	fmt.Println(address4)
+
+	sectionDivider("Pointer New")
+	// You can create pointer using "new", but new can only return empty data, so basically without inital data
+	address5 := new(Address)
+	fmt.Println(address5)
+
+	sectionDivider("Pointer in Function")
+	address6 := Address{
+		City:     "Yogyakarta",
+		Province: "Daerah Istimewa Yogyakarta",
+		Country:  "Indonesia",
+	}
+	changeCity(&address6, "Solo") // change the address6 type into a pointer using "&"
+	fmt.Println(address6)
+
+	sectionDivider("Pointer in struct or method")
+	// pointer in struct will be usefull because you wont duplicate your data
+	// and it wont overload your memory
+	address7 := Address{
+		City:     "London",
+		Province: "Greater Londong",
+		Country:  "United Kingdom",
+	}
+	address7.goToFrance()
+	fmt.Println(address7)
 }
 
 // Function
@@ -747,6 +854,10 @@ func sectionDivider(section string) {
 	fmt.Println("")
 	fmt.Println("===========================")
 	fmt.Println(section)
+	fmt.Println("===========================")
+}
+
+func line() {
 	fmt.Println("===========================")
 }
 
@@ -903,12 +1014,12 @@ type HasName interface {
 	GetName() string
 }
 
-func byeBye(hasName HasName) {
-	fmt.Println("Bye bye", hasName.GetName())
-}
-
 type Person struct {
 	Name string
+}
+
+func byeBye(hasName HasName) {
+	fmt.Println("Bye bye", hasName.GetName())
 }
 
 func (person Person) GetName() string {
@@ -940,3 +1051,45 @@ func Blank(i int) interface{} {
 // type Blank interface {
 
 // }
+
+// Nil
+func newMap(name string) map[string]string {
+	if name == "" {
+		return nil
+	} else {
+		return map[string]string{
+			"name": name,
+		}
+	}
+}
+
+// Error interface
+func diveder1(value int, diveder int) (int, error) {
+	if diveder == 0 {
+		return 0, errors.New("Can't use 0 as divider")
+	} else {
+		result := value / diveder
+		return result, nil
+	}
+}
+
+func testTypeAssertions() interface{} {
+	return 0
+}
+
+// Pointer
+type Address struct {
+	City, Province, Country string
+}
+
+// Pointer in function
+func changeCity(address *Address, value string) { // Because we use pointer in this function
+	address.City = value // The value of the original data will change
+}
+
+// Pointer in struct
+func (address *Address) goToFrance() {
+	address.City = "Paris"
+	address.Province = "Île-de-France"
+	address.Country = "France"
+}
