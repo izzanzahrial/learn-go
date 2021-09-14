@@ -1,10 +1,14 @@
 // use package main for running package
 package main
 
-// import package fmt to use Println
 import (
 	"errors"
 	"fmt"
+	"learn-go/database"
+	"os"
+
+	// _ "learn-go/database" <-- the "_" at the start of import is blank identifier
+	"learn-go/helper"
 	"log"
 	"strconv"
 )
@@ -841,6 +845,42 @@ func main() {
 	}
 	address7.goToFrance()
 	fmt.Println(address7)
+
+	sectionDivider("Package")
+	// Read helper/count.go
+	// to access other package function, use import
+	num1 := 2
+	num2 := 3
+	result5 := helper.CountNum(num1, num2)
+	fmt.Println(result5)
+
+	sectionDivider("Access Modifier")
+	// rule in access modifier
+	// lower case title cant be access from other package
+	// Upper case title can be access from other package
+	// example : Accessable() and nonAccessable()
+	// and this is not only for function, but for everything, like var, struct
+
+	sectionDivider("Package Initialization")
+	// Is fuction that will initialize when the package is used
+	// check database
+	databaseName := database.GetDatabase()
+	fmt.Println(databaseName)
+	// if you want to use Package initialization without the package function
+	// you can use blank identifier
+	// check import
+
+	sectionDivider("Package OS")
+	// Operating system package
+	// Args = get arguments in golang
+	args := os.Args
+	fmt.Println(args)
+	// Hostname = name of the host
+	hostname, err := os.Hostname()
+	if err != nil {
+		fmt.Println("Error :", err)
+	}
+	fmt.Println(hostname)
 }
 
 // Function
