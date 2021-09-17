@@ -2,10 +2,19 @@
 package main
 
 import (
+	"container/list"
+	"container/ring"
 	"errors"
+	"flag"
 	"fmt"
 	"learn-go/database"
+	"math"
 	"os"
+	"reflect"
+	"regexp"
+	"sort"
+	"strings"
+	"time"
 
 	// _ "learn-go/database" <-- the "_" at the start of import is blank identifier
 	"learn-go/helper"
@@ -870,8 +879,10 @@ func main() {
 	// you can use blank identifier
 	// check import
 
+	// Package documentation : https://pkg.go.dev/
 	sectionDivider("Package OS")
 	// Operating system package
+	// https://pkg.go.dev/os
 	// Args = get arguments in golang
 	args := os.Args
 	fmt.Println(args)
@@ -881,6 +892,142 @@ func main() {
 		fmt.Println("Error :", err)
 	}
 	fmt.Println(hostname)
+
+	sectionDivider("Package Flag")
+	// Package to parse data from CLI(command line interface)
+	// https://pkg.go.dev/flag
+	host := flag.String("host", "localhost", "Put your database host")
+	username := flag.String("username", "root", "Put your database username")
+	password := flag.String("password", "root", "Put your database password")
+
+	flag.Parse()
+
+	fmt.Println(*host, *username, *password)
+
+	sectionDivider("Package Strings")
+	// Package to manipulate string
+	// https://pkg.go.dev/strings
+	fmt.Println(strings.Contains("Contains True", "True"))                                  // string contains text
+	fmt.Println(strings.Split("Split this text", " "))                                      // split the string using parameter
+	fmt.Println(strings.ToLower("MAKE ME LOWER CASE"))                                      // make string lower case
+	fmt.Println(strings.ToUpper("make me upper case"))                                      // make string upper case
+	fmt.Println(strings.Trim("      Trim the space at the start and end text       ", " ")) // Trim text from the start and the end using parameter
+	fmt.Println(strings.ReplaceAll("Replace this part ->", "->", ""))                       // replace all text to the 3rd parameter
+
+	sectionDivider("Package strconv")
+	// Package to convert string
+	// https://pkg.go.dev/strconv
+	convertFromString, err := strconv.ParseBool("true") // Parse = convert string into other type, in this case boolean
+	if err != nil {
+		fmt.Println("Error :", err.Error())
+	}
+	fmt.Println(convertFromString)
+
+	convertToString := strconv.FormatInt(441995, 10) // Format = convert other type to string, in this case int
+	fmt.Println(convertToString)
+
+	convertToStringItoa := strconv.Itoa(04) // convert int to string without parsing base int
+	fmt.Println(convertToStringItoa)
+
+	convertToStringAtoi, err := strconv.Atoi("04") // convert string into int without parsing base int and bit size
+	fmt.Println(convertToStringAtoi)
+
+	sectionDivider("Package math")
+	// Package for math function
+	// https://pkg.go.dev/math
+	fmt.Println(math.Round(0.4))
+	fmt.Println(math.Floor(1.4))
+	fmt.Println(math.Ceil(2.1))
+	fmt.Println(math.Max(4, 2))
+	fmt.Println(math.Min(2, 1))
+
+	sectionDivider("Package container list")
+	// Package to implement doubly linked list data structure
+	// https://pkg.go.dev/container/list
+	doubleLinkedList := list.New()     // create double linked list
+	doubleLinkedList.PushBack("Ahmad") // put value into the back of the linked list
+	doubleLinkedList.PushBack("Izzan")
+	doubleLinkedList.PushBack("Zahrial")
+
+	for i := doubleLinkedList.Front(); i != nil; i.Next() {
+		fmt.Println(i.Value)
+	}
+
+	sectionDivider("Package container ring")
+	// Package to implement circular list data structure
+	// https://pkg.go.dev/container/ring
+	circularList := ring.New(4) // create circular list
+	for i := 0; i < circularList.Len(); i++ {
+		circularList.Value = "Value" + strconv.FormatInt(int64(i), 10) // put value into the circular list
+		circularList = circularList.Next()                             // jump to the next data
+	}
+
+	circularList.Do(func(value interface{}) {
+		fmt.Println(value)
+	})
+
+	sectionDivider("Package sort")
+	// Sorting package
+	// https://pkg.go.dev/sort
+	// Look at the interface implementation
+	users := []User{
+		{"Ahmad", 4},
+		{"Izzan", 4},
+		{"Zahrial", 95},
+	}
+
+	sort.Sort(UserSlice(users))
+
+	fmt.Println(users)
+
+	sectionDivider("Package time")
+	// Package to manage time in golang
+	// https://pkg.go.dev/time
+	now := time.Now()
+
+	fmt.Println(now.Day(), now.Month(), now.Year())
+
+	utc := time.Date(1995, 04, 04, time.Now().Hour(), time.Now().Minute(), time.Now().Second(), time.Now().Nanosecond(), time.UTC)
+	fmt.Println(utc)
+
+	layout := time.RFC3339 // format time
+	parse, err := time.Parse(layout, "1995-04-04")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(parse)
+
+	sectionDivider("Package reflect")
+	// Package to look at the structure of the code
+	// like the type of data, field data
+	// https://pkg.go.dev/reflect
+	reflectSample := ReflectSample{"Izzan"}
+	reflectSampleType := reflect.TypeOf(reflectSample)
+	reflectSampleField := reflectSampleType.Field(0)
+
+	fmt.Println(reflectSampleField)
+
+	reflectSampleTag := reflectSampleType.Field(0).Tag.Get("required")
+
+	fmt.Println(reflectSampleTag)
+
+	fmt.Println(IsValid(reflectSample))
+
+	reflectSample.Name = ""
+	fmt.Println(IsValid(reflectSample))
+
+	sectionDivider("Package regexp")
+	// Regular expression
+	// https://pkg.go.dev/regexp
+	// regex wiki https://github.com/google/re2/wiki/Syntax
+
+	var regex *regexp.Regexp = regexp.MustCompile("z([a-z])n")
+
+	fmt.Println(regex.MatchString("zan"))
+	fmt.Println(regex.MatchString("zai"))
+
+	result10 := regex.FindAllString("zan zin zai zab", 2)
+	fmt.Println(result10)
 }
 
 // Function
@@ -1132,4 +1279,42 @@ func (address *Address) goToFrance() {
 	address.City = "Paris"
 	address.Province = "Île-de-France"
 	address.Country = "France"
+}
+
+// Package sort
+// if you wanna use pakcage sort, your data have to have interface with len, less, and swap as a contract
+type User struct {
+	Name string
+	Age  int
+}
+
+type UserSlice []User
+
+func (value UserSlice) Len() int {
+	return len(value)
+}
+
+func (value UserSlice) Less(i, j int) bool {
+	return value[i].Age < value[j].Age
+}
+
+func (value UserSlice) Swap(i, j int) {
+	value[i].Age, value[j].Age = value[j].Age, value[i].Age
+}
+
+// Package reflect
+type ReflectSample struct {
+	Name string `required:"true" max:"10"` // <-- struct tag
+}
+
+func IsValid(data interface{}) bool {
+	j := reflect.TypeOf(data)
+	for i := 0; i < j.NumField(); i++ {
+		field := j.Field(i)
+		if field.Tag.Get("required") == "true" {
+			value := reflect.ValueOf(data).Field(i).Interface()
+			return value != ""
+		}
+	}
+	return true
 }
